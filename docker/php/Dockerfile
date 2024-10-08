@@ -11,6 +11,7 @@ RUN composer install        \
     --no-scripts
 RUN php artisan key:generate
 RUN php artisan migrate --seed
+RUN ls
 COPY . /app/
 RUN composer dump-autoload --optimize --classmap-authoritative
 
