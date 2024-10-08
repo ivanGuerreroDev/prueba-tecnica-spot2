@@ -1,6 +1,7 @@
 version: '3'
 
 volumes:
+  storage-data: 
   mysql-data:
     name: ${PROJECT_NAME}-data
 
@@ -61,5 +62,3 @@ services:
       - network-id
      links:
       - mysql
-volumes:
-    storage-data: 
