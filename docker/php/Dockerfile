@@ -11,7 +11,7 @@ RUN composer install        \
     --no-scripts
 RUN php artisan key:generate
 RUN php artisan migrate --seed
-COPY ./www /app/
+COPY . /app/
 RUN composer dump-autoload --optimize --classmap-authoritative
 
 ### Composer
@@ -45,7 +45,7 @@ RUN rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apk/*
 RUN docker-php-ext-configure gd --enable-gd --with-freetype
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-COPY ./www /var/www
+COPY . /var/www
 COPY --from=composer /app/vendor                /var/www/html/vendor
 COPY --from=node     /app/public                /var/www/html/public/
 
