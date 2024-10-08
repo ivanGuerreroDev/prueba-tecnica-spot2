@@ -4,7 +4,7 @@ import { Box } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
-
+const PUBLIC_URL =import.meta.env.VITE_HOSTAPI;
 function UrlShortener() {
     const [url, setUrl] = useState('');
     const [csrfToken, setCsrfToken] = useState('');
@@ -30,7 +30,7 @@ function UrlShortener() {
 
     const getUrlShorteneds = async () => {
         setFetching(true);
-        const response = await fetch('http://localhost:8000/api/url', {
+        const response = await fetch(PUBLIC_URL+'/api/url', {
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': csrfToken, // Añadir token CSRF
@@ -41,7 +41,7 @@ function UrlShortener() {
         setFetching(false);
     }
     const removeUrlShortened = async (id) => {
-        const response = await fetch(`http://localhost:8000/api/url/${id}`, {
+        const response = await fetch(`${PUBLIC_URL}/api/url/${id}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -55,7 +55,7 @@ function UrlShortener() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setCreating(true);
-        const response = await fetch('http://localhost:8000/api/url/shorten', {
+        const response = await fetch(PUBLIC_URL+'/api/url/shorten', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

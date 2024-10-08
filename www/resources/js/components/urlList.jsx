@@ -17,7 +17,8 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 
-const baseUrl = 'http://localhost:8000/api/url';
+const PUBLIC_URL =import.meta.env.VITE_HOSTAPI;
+const baseUrl = PUBLIC_URL+'/api/url';
 export default function UrlList({
     data,
     onRemove,

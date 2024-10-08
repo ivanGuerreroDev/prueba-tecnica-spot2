@@ -1,59 +1,42 @@
-FROM composer:1.10 AS composer
+ARG php_version
 
-COPY composer.json /app
-COPY composer.lock /app
+FROM php:${php_version}-fpm
+# Install common php extension dependencies
+RUN apt-get update && apt-get install -y \
+    libfreetype-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev \
+    zlib1g-dev \
+    libzip-dev \
+    unzip \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd \
+    && docker-php-ext-install zip \
+    && docker-php-ext-install pdo \
+    && docker-php-ext-install pdo_mysql
 
-RUN composer install        \
-    --ignore-platform-reqs  \
-    --no-ansi               \
-    --no-autoloader         \
-    --no-interaction        \
-    --no-scripts
+# Set the working directory
+
+COPY ../../www /var/www/app
+WORKDIR /var/www/app
+
+RUN chown -R www-data:www-data /var/www/app \
+    && chmod -R 775 /var/www/app/storage
+
+# install composer
+COPY --from=composer:2.6.5 /usr/bin/composer /usr/local/bin/composer
+
+# copy composer.json to workdir & install dependencies
+COPY ../../www/composer.json ./
+RUN composer install
 RUN php artisan key:generate
-RUN php artisan migrate --seed
-RUN ls
-COPY . /app/
-RUN composer dump-autoload --optimize --classmap-authoritative
 
-### Composer
-########################################################################
-### NodeJS
+# install nodejs
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
+RUN apt-get update && apt-get install -y nodejs
 
-FROM node:14.17.0-alpine3.12 AS node
-
-WORKDIR /app
-
-COPY package.json           /app
-COPY package-lock.json      /app
-COPY vite.config.js         /app
-COPY /resources             /app/resources
-
-RUN npm install && npm run build
-
-### NodeJS
-########################################################################
-### PHP
-
-FROM php:8.2
-
-RUN apk update && apk add --no-cache \
-    libpng-dev                       \
-    freetype-dev                     \
-    oniguruma-dev                    \
-    libxml2-dev
-
-RUN rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apk/*
-RUN docker-php-ext-configure gd --enable-gd --with-freetype
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
-
-COPY . /var/www
-COPY --from=composer /app/vendor                /var/www/html/vendor
-COPY --from=node     /app/public                /var/www/html/public/
-
-
-RUN addgroup -g 1000 -S www && \
-    adduser -u 1000 -S www -G www-data
-
-COPY --chown=www:www-data . /var/www
-
-WORKDIR /var/www
+# install npm modules
+RUN npm install
+RUN npm run build
+COPY entrypoint.sh /usr/bin/entrypoint.sh
+RUN chmod +x /usr/bin/entrypoint.sh
