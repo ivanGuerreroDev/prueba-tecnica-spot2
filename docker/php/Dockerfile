@@ -1,55 +1,59 @@
 ARG php_version
+FROM composer:1.10 AS composer
 
-FROM php:${php_version}
-ARG php_version
-FROM jkaninda/laravel-php-fpm:${php_version}
-# Copy laravel project files
-COPY ./www /var/www/html
-# Storage Volume
-VOLUME /var/www/html/storage
+COPY composer.json /app
+COPY composer.lock /app
 
-WORKDIR /var/www/html
-
-# Custom cache invalidation / optional
-#ARG CACHEBUST=1
-# Run composer install / Optional
-#RUN composer install
-# Fix permissions
-RUN chown -R www-data:www-data /var/www/html
-
-# install composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-# install nodejs
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
-RUN apt-get install -y nodejs
-
-# install composer modules
-RUN composer install
+RUN composer install        \
+    --ignore-platform-reqs  \
+    --no-ansi               \
+    --no-autoloader         \
+    --no-interaction        \
+    --no-scripts
 RUN php artisan key:generate
-
-# Migration and seed
 RUN php artisan migrate --seed
+COPY ./www /app/
+RUN composer dump-autoload --optimize --classmap-authoritative
 
-# install npm modules
-RUN npm install
-RUN npm run build
+### Composer
+########################################################################
+### NodeJS
 
-# install composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+FROM node:14.17.0-alpine3.12 AS node
 
-# install nodejs
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
-RUN apt-get install -y nodejs
+WORKDIR /app
 
-# install composer modules
-RUN composer install
-RUN php artisan key:generate
+COPY package.json           /app
+COPY package-lock.json      /app
+COPY vite.config.js         /app
+COPY /resources             /app/resources
 
-# Migration and seed
-RUN php artisan migrate --seed
+RUN npm install && npm run build
 
-# install npm modules
-RUN npm install
-RUN npm run build
+### NodeJS
+########################################################################
+### PHP
 
+FROM php:${php_version}-fpm-alpine3.12
+
+RUN apk update && apk add --no-cache \
+    libpng-dev                       \
+    freetype-dev                     \
+    oniguruma-dev                    \
+    libxml2-dev
+
+RUN rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apk/*
+RUN docker-php-ext-configure gd --enable-gd --with-freetype
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+
+COPY ./www /var/www
+COPY --from=composer /app/vendor                /var/www/html/vendor
+COPY --from=node     /app/public                /var/www/html/public/
+
+
+RUN addgroup -g 1000 -S www && \
+    adduser -u 1000 -S www -G www-data
+
+COPY --chown=www:www-data . /var/www
+
+WORKDIR /var/www
