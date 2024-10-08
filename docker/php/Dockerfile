@@ -5,11 +5,36 @@ FROM php:${php_version}
 # prepare install
 RUN apt-get update --fix-missing
 RUN apt-get install -y build-essential libssl-dev zlib1g-dev libpng-dev libjpeg-dev libfreetype6-dev
-RUN apt-get install -y libzip-dev
+
+# install zip extension
+RUN apt-get install -y libzip-dev && docker-php-ext-install zip
+
+# install mysql extension
+RUN docker-php-ext-install mysqli pdo pdo_mysql
+
+# install gd extension
 RUN docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/
+RUN docker-php-ext-install gd
+
+# install Ctype extension
+RUN docker-php-ext-install ctype
+
+# install curls php extension
 RUN apt-get install -y libcurl4-openssl-dev
+RUN docker-php-ext-install curl
+
+#install dom php extension
 RUN apt-get install -y libxml2-dev
-RUN docker-php-ext-install hash mbstring openssl pcre pdo pdo_mysql mysqli session tokenizer xml filter fileinfo dom curl ctype gd zip
+RUN docker-php-ext-install dom
+
+# install fileinfo php extension
+RUN docker-php-ext-install fileinfo
+
+# install Filter php extebsion
+RUN docker-php-ext-install filter
+
+# install Hash, Mbstring, OpenSSL, PCRE, PDO, Session, Tokenizer and XML php extension
+RUN docker-php-ext-install hash mbstring openssl pcre session tokenizer xml
 
 
 
