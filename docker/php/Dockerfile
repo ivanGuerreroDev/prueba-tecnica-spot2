@@ -1,4 +1,3 @@
-ARG php_version
 FROM composer:1.10 AS composer
 
 COPY composer.json /app
@@ -34,7 +33,7 @@ RUN npm install && npm run build
 ########################################################################
 ### PHP
 
-FROM php:${php_version}-fpm-alpine3.12
+FROM php:8.2-fpm-alpine3.12
 
 RUN apk update && apk add --no-cache \
     libpng-dev                       \
