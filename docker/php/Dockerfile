@@ -33,7 +33,7 @@ RUN npm install && npm run build
 ########################################################################
 ### PHP
 
-FROM php:8.2-fpm-alpine3.12
+FROM php:8.2
 
 RUN apk update && apk add --no-cache \
     libpng-dev                       \
