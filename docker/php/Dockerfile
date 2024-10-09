@@ -22,24 +22,21 @@ WORKDIR /var/www/app
 
 RUN chown -R www-data:www-data /var/www/app \
     && chmod -R 775 /var/www/app/storage
-
 # install composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
-
-# copy composer.json to workdir & install dependencies
-COPY ../../www/composer.json ./
 RUN composer install
 RUN php artisan key:generate
 # install nodejs
 RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
 RUN apt-get update && apt-get install -y nodejs
-
 # install npm modules
 RUN npm install
 RUN npm run build
+
+COPY ../../www/vendor ./vendor
+COPY ../../www/node_modules ./node_modules
 COPY ../../www/public ./public
-copy ../../www/vendor ./vendor
-copy ../../www/node_modules ./node_modules
+COPY ../../www/composer.json ./resources
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
 CMD ["php-fpm"]
