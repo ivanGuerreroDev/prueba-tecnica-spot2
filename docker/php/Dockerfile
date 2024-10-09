@@ -41,5 +41,4 @@ COPY ../../www/public ./public
 copy ../../www/vendor ./vendor
 copy ../../www/node_modules ./node_modules
 # Expose port 80 and start php-fpm server
-EXPOSE 80
-CMD ["php-fpm"]
+CMD ["sudo php artisan serve --host 0.0.0.0 --port 80"]
