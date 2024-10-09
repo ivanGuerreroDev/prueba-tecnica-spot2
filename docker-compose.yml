@@ -61,7 +61,6 @@ services:
       - VITE_APP_NAME = ${VITE_APP_NAME}
       - COMPOSER_ALLOW_SUPERUSER = ${COMPOSER_ALLOW_SUPERUSER}
       - VITE_HOSTAPI = ${VITE_HOSTAPI}
-    entrypoint: ["/usr/bin/entrypoint.sh"]
 
   nginx:
     image: nginx:alpine
