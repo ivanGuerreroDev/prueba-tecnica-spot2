@@ -59,9 +59,8 @@ services:
       - SESSION_LIFETIME = ${SESSION_LIFETIME}
       - SESSION_PATH = ${SESSION_PATH}
       - VITE_APP_NAME = ${VITE_APP_NAME}
-      - VITE_APP_URL = ${VITE_APP_URL}
       - COMPOSER_ALLOW_SUPERUSER = ${COMPOSER_ALLOW_SUPERUSER}
-      - VITE_HOSTAPI = ${KOYEB_PUBLIC_DOMAIN}
+      - VITE_HOSTAPI = ${VITE_HOSTAPI}
     entrypoint: ["/usr/bin/entrypoint.sh"]
 
   nginx:
