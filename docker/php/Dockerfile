@@ -24,6 +24,7 @@ RUN chown -R www-data:www-data /var/www/app \
     && chmod -R 775 /var/www/app/storage
 # install composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+COPY ../../www/composer.json ./
 RUN composer install
 RUN php artisan key:generate
 # install nodejs
@@ -36,7 +37,7 @@ RUN npm run build
 COPY ../../www/vendor ./vendor
 COPY ../../www/node_modules ./node_modules
 COPY ../../www/public ./public
-COPY ../../www/composer.json ./
+
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
 CMD ["php-fpm"]
