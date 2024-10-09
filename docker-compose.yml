@@ -65,7 +65,7 @@ services:
   nginx:
     image: nginx:alpine
     container_name: nginx
-    restart: unless-stopped
+    restart: always
     tty: true
     ports:
       - "80:80"
@@ -77,7 +77,3 @@ services:
       - php
     networks:
       - network-id
-server: 
-   volumes:
-      - ./www:/var/www/app
-      - ./nginx:/etc/nginx/conf.d
