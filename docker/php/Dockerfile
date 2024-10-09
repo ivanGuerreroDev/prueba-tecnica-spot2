@@ -38,7 +38,8 @@ RUN apt-get update && apt-get install -y nodejs
 RUN npm install
 RUN npm run build
 COPY ../../www/public ./public
-
+copy ../../www/vendor ./vendor
+copy ../../www/node_modules ./node_modules
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
 CMD ["php-fpm"]
