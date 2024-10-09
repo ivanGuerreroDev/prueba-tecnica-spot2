@@ -30,6 +30,7 @@ COPY --from=composer:2.6.5 /usr/bin/composer /usr/local/bin/composer
 COPY ../../www/composer.json ./
 RUN composer install
 RUN php artisan key:generate
+COPY ../../www/vendor ./
 
 # install nodejs
 RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
