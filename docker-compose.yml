@@ -13,8 +13,6 @@ services:
     container_name: ${PROJECT_NAME}-php
     expose:
       - "9000"
-    volumes:
-      - ./www:/var/www/app
     networks:
       - network-id
     environment:
