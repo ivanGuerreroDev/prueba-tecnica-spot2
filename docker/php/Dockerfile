@@ -40,5 +40,6 @@ RUN npm run build
 COPY ../../www/public ./public
 copy ../../www/vendor ./vendor
 copy ../../www/node_modules ./node_modules
-# Expose port 80 and start php-fpm server
-CMD ["sudo php artisan serve --host 0.0.0.0 --port 80"]
+# Expose port 9000 and start php-fpm server
+EXPOSE 9000
+CMD ["php-fpm"]
