@@ -38,5 +38,7 @@ RUN apt-get update && apt-get install -y nodejs
 # install npm modules
 RUN npm install
 RUN npm run build
-COPY entrypoint.sh /usr/bin/entrypoint.sh
-RUN chmod +x /usr/bin/entrypoint.sh
+
+# Expose port 9000 and start php-fpm server
+EXPOSE 9000
+CMD ["php-fpm"]
