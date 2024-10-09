@@ -1,4 +1,6 @@
 ARG php_version
+ARG user
+ARG uid
 
 FROM php:${php_version}-fpm
 # Install common php extension dependencies
@@ -26,21 +28,23 @@ RUN chown -R www-data:www-data /var/www/app \
 # install composer
 COPY --from=composer:2.6.5 /usr/bin/composer /usr/local/bin/composer
 
+#USER root
+#RUN chmod 777 -R /var/www/
+RUN useradd -G www-data,root -u $uid -d /home/$user $user
+RUN mkdir -p /home/$user/.composer && \
+    chown -R $user:$user /home/$user
+USER $user
+
 # copy composer.json to workdir & install dependencies
 COPY ../../www/composer.json ./
 RUN composer install
 RUN php artisan key:generate
-COPY ../../www/vendor ./
-
 # install nodejs
 RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
 RUN apt-get update && apt-get install -y nodejs
 
 # install npm modules
 RUN npm install
-COPY ../../www/package.json ./
-COPY ../../www/package-lock.json ./
-COPY ../../www/node_modules ./
 RUN npm run build
 COPY ../../www/public ./public
 
