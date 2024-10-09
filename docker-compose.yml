@@ -1,9 +1,4 @@
 version: '3'
-
-volumes:
-  mysql-data:
-    name: ${PROJECT_NAME}-data
-
 networks:
   network-id:
     driver: bridge
@@ -22,8 +17,6 @@ services:
       - ./www:/var/www/app
     networks:
       - network-id
-    depends_on:
-      - mysql
     environment:
       - APP_DEBUG = ${APP_DEBUG}
       - APP_ENV = ${APP_ENV}
@@ -84,6 +77,5 @@ services:
       - ./www:/var/www/app:delegated
     depends_on:
       - php
-      - mysql
     networks:
       - network-id
