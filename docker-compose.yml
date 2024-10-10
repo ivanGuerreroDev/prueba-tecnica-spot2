@@ -13,6 +13,9 @@ services:
     container_name: ${PROJECT_NAME}-php
     volumes:
       - ./www:/var/www/app
+      - /var/www/app/vendor
+      - /var/www/app/node_modules
+      - /var/www/app/public/build
     expose:
       - "9000"
     networks:
