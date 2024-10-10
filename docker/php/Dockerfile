@@ -30,13 +30,15 @@ RUN php artisan key:generate
 # install nodejs
 RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
 RUN apt-get update && apt-get install -y nodejs
+
 # install npm modules
 RUN npm install
 RUN npm run build
 
 COPY ../../www/vendor ./vendor
 COPY ../../www/node_modules ./node_modules
-COPY ../../www/public ./public
+COPY ../../www/public/build ./public/build
+COPY ../../www/public/manifest.json ./public/build
 
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
