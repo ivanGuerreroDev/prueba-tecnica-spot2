@@ -28,12 +28,11 @@ COPY ../../www/composer.json ./
 RUN composer install
 RUN php artisan key:generate
 # install nodejs
-RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_20.x | bash -
 RUN apt-get update && apt-get install -y nodejs
 
 # install npm modules
 RUN npm install
-RUN apt-get -y install vite
 RUN npm run build
 
 COPY ../../www/vendor ./vendor
