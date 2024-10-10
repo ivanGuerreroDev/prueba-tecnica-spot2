@@ -79,7 +79,7 @@ export default function UrlList({
                                         <TableCell align="right">
                                             <IconButton
                                                 aria-label="open"
-                                                href={`${baseUrl}/${row.shortened_url}`}
+                                                href={`${baseUrl}/url/redirect/${row.shortened_url}`}
                                                 target="_blank"
                                                 color="primary"
                                             >
