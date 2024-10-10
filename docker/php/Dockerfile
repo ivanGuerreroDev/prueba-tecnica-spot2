@@ -33,6 +33,7 @@ RUN apt-get update && apt-get install -y nodejs
 
 # install npm modules
 RUN npm install
+RUN apt-get -y install vite
 RUN npm run build
 
 COPY ../../www/vendor ./vendor
