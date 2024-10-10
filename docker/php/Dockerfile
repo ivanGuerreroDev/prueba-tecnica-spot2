@@ -32,7 +32,7 @@ RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
 RUN apt-get update && apt-get install -y nodejs
 
 # install npm modules
-RUN npm ci
+RUN npm install
 RUN npm run build
 
 COPY ../../www/vendor ./vendor
