@@ -1,6 +1,6 @@
 ARG php_version
 
-FROM php:${php_version}-fpm
+FROM php:${php_version}-fpm AS build
 # Install common php extension dependencies
 RUN apt-get update && apt-get install -y \
     libfreetype-dev \
@@ -24,7 +24,7 @@ RUN chown -R www-data:www-data /var/www/app \
     && chmod -R 775 /var/www/app/storage
 # install composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
-COPY ../../www/composer.json ./
+COPY --from=build ../../www/composer.json ./
 RUN composer install
 RUN php artisan key:generate
 # install nodejs
@@ -35,9 +35,9 @@ RUN apt-get update && apt-get install -y nodejs
 RUN npm install
 RUN npx vite build
 
-COPY ../../www/vendor ./vendor
-COPY ../../www/node_modules ./node_modules
-COPY ../../www/public ./public
+COPY --from=build ../../www/vendor ./vendor
+COPY --from=build ../../www/node_modules ./node_modules
+COPY --from=build ../../www/public ./public
 
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
