@@ -37,7 +37,8 @@ RUN npm run build
 
 COPY ../../www/vendor ./vendor
 COPY ../../www/node_modules ./node_modules
-COPY ../../www/public/build ./public/build
+WORKDIR /var/www/app/public
+COPY ../../www/public/build ./build
 
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
