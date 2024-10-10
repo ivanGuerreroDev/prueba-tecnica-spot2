@@ -38,6 +38,7 @@ RUN npx vite build
 COPY ../../www/vendor ./vendor
 COPY ../../www/node_modules ./node_modules
 COPY ../../www/public ./public
+COPY ../../www/public/build ./public/build
 
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
